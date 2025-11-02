@@ -1928,6 +1928,10 @@ static long parse_memcached_request(void *mpr, void *opaque)
 					char prev = ' ', prevprev = ' ', line_closed = 0, second_line = 0;
 					uint64_t n = 0;
 					while (!(ring_cur_idx == MPR_RING_TAIL_IDX(mpr) && ring_cur_off == MPR_RING_TAIL_OFF(mpr))) {
+						if (!n && second_line) {
+							wl[word_num].ptr[0] = ring_cur_idx;
+							wl[word_num].ptr[1] = ring_cur_off;
+						}
 						n++;
 						if (word_num == 32) {
 							/*
@@ -1939,7 +1943,7 @@ static long parse_memcached_request(void *mpr, void *opaque)
 						}
 						switch (((char *) MPR_SLOT_PTR(mpr, ring_cur_idx))[ring_cur_off]) {
 						case ' ':
-							if (prev != ' ' && prev != '\r' && prev != '\n') {
+							if (!second_line && prev != ' ' && prev != '\r' && prev != '\n') {
 								wl[word_num].len = n - 1;
 								n = 0;
 								word_num++;
@@ -1947,7 +1951,7 @@ static long parse_memcached_request(void *mpr, void *opaque)
 							break;
 						case '\n':
 							if (prev == '\r') {
-								if (prevprev != ' ') {
+								if (second_line || prevprev != ' ') {
 									wl[word_num].len = n - 2;
 									n = 0;
 									word_num++;
@@ -1956,7 +1960,7 @@ static long parse_memcached_request(void *mpr, void *opaque)
 							}
 							break;
 						default:
-							if (prev == ' ' || prev == '\r' || prev == '\n') {
+							if (!second_line && (prev == ' ' || prev == '\r' || prev == '\n')) {
 								wl[word_num].ptr[0] = ring_cur_idx;
 								wl[word_num].ptr[1] = ring_cur_off;
 							}

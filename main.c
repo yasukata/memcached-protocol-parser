@@ -5938,6 +5938,10 @@ static long parse_memcached_request(void *mpr, void *opaque)
 								}
 								{
 									/* XXX: not implemented */
+									{ /* unused */
+										(void) max_hot_factor;
+										(void) max_warm_age_factor;
+									}
 								}
 								PUSH_RESPONSE("OK\r\n", 4);
 							}

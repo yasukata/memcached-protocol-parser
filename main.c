@@ -5540,7 +5540,7 @@ static long parse_memcached_request(void *mpr, void *opaque)
 											mp_assert(!e);
 											tmp[0] = ' ';
 											tmp[1] = 'c';
-											PUSH_RESPONSE(tmp, r);
+											PUSH_RESPONSE(tmp, 2 + r);
 										}
 										break;
 									case 't':
@@ -5553,7 +5553,7 @@ static long parse_memcached_request(void *mpr, void *opaque)
 											mp_assert(!e);
 											tmp[0] = ' ';
 											tmp[1] = 't';
-											PUSH_RESPONSE(tmp, r);
+											PUSH_RESPONSE(tmp, 2 + r);
 										}
 										break;
 									case 'k':
@@ -5568,7 +5568,7 @@ static long parse_memcached_request(void *mpr, void *opaque)
 											mp_assert(!e);
 											tmp[0] = ' ';
 											tmp[1] = 's';
-											PUSH_RESPONSE(tmp, r);
+											PUSH_RESPONSE(tmp, 2 + r);
 										}
 										break;
 									}
@@ -5579,7 +5579,7 @@ static long parse_memcached_request(void *mpr, void *opaque)
 					}
 					break;
 				case CMD_MN:
-					PUSH_RESPONSE("MN\r\n", 2);
+					PUSH_RESPONSE("MN\r\n", 4);
 					break;
 				case CMD_SLABS:
 					if (word_num < 3) {
